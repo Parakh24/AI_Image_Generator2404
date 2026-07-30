@@ -40,5 +40,11 @@ class GenerationJob(Base):
     __tablename__ = "generation_jobs" 
 
     id = Column(String(50), primary_key=True, default=generate_job_id)
-    user_id=Column(String(50), nullable=False, index=True) 
-    prompt=Column(Text, nullable=False)
+    user_id = Column(String(50), nullable=False, index=True)
+    prompt = Column(Text, nullable=False)
+    aspect_ratio = Column(String(10), nullable=False, default="1:1")
+    status = Column(Enum(GenerationStatus), nullable=False, default=GenerationStatus.PENDING, index=True)
+    error_message = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), default=get_current_time, nullable=False)
+    updated_at = Column(DateTime(timezone=True), default=get_current_time, onupdate=get_current_time, nullable=False)
+    completed_at = Column(DateTime(timezone=True), nullable=True)
