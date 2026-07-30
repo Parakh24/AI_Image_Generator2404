@@ -21,7 +21,7 @@ def generate_job_id():
     Create a unique job id like 'job_<random_hex>'.
     """
     return "job_" + uuid.uuid4().hex
-
+    
 
 def get_current_time(): 
     """
