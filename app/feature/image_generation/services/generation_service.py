@@ -9,9 +9,7 @@ is the worker's responsibility, not the service's.
 """
 
 from typing import Optional
-
 from sqlalchemy.orm import Session
-
 from app.feature.image_generation.models.generation_job import GenerationJob
 from app.feature.image_generation.services.queue_client import enqueue_generation_job
 from app.feature.image_generation.repositories.generation_jobs import GenerationJobRepository
