@@ -8,9 +8,8 @@ The two routes for image generation:
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-
 from app.feature.image_generation.api.routes.dependencies import get_current_user_id
-from app import get_db
+from app.database import get_db
 from app.feature.image_generation.models.generation_job import GenerationStatus
 from app.feature.image_generation.api.schemas.generation_request import GenerationCreateRequest
 from app.feature.image_generation.api.schemas.generation_response import GenerationResponse
@@ -34,14 +33,14 @@ def create_image_generation(
     2. GenerationCreateRequest schema has already validated the body
        (prompt not blank, aspect_ratio is one of the allowed values)
        before this function even runs
-    3. GenerationService.start_generation() creates the job record
+    3. GenerationService.create_generation() creates the job record
     4. The job id and status are returned immediately
 
     202 Accepted (not 200 OK) means "request accepted, processing
     not finished yet" - which is exactly what's true here.
     """
     service = GenerationService(db)
-    job = service.start_generation(
+    job = service.create_generation(
         user_id=user_id,
         prompt=request.prompt,
         aspect_ratio=request.aspect_ratio,
