@@ -27,7 +27,7 @@ from sqlalchemy import create_engine
 # Connection setup 
 #-----------------------------------------------------------------------
 
-DATABASE_URL = ""
+DATABASE_URL = "sqlite:///./crmjio_image_gen.db"
 engine = create_engine(DATABASE_URL) 
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
