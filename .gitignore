@@ -1,2 +1,4 @@
 venv314/ 
 *__init__.py 
+*.db 
+*__pycache__
