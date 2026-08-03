@@ -1,26 +1,27 @@
-
-
 DEFAULT_NEGATIVE_PROMPT = "blurry, low quality, bad anatomy, disfigured, poorly drawn, deformed," \
                           "extra limbs, cloned face, skinny, glitchy, double torso, extra arms, " \
                           "extra hands, mangled fingers, missing lips, ugly face, distorted face, " \
-                          "text, error, extra digit, cropped" 
+                          "text, error, extra digit, cropped"
 
 
 def build_prompt(job):
     """
-    Builds the final prompt and negative prompt for the image generation job. 
+    Builds the final prompt and negative prompt for the image generation job.
     """
     parts = []
 
-    if job.lora_trigger_word:
-        parts.append(job.lora_trigger_word)
+    lora_trigger = getattr(job, "lora_trigger_word", None)
+    if lora_trigger:
+        parts.append(lora_trigger)
 
-    parts.append(job.user_prompt)
+    parts.append(job.prompt)   
 
-    if job.style_tags:
-        parts.append(job.style_tags)
+    style_tags = getattr(job, "style_tags", None)
+    if style_tags:
+        parts.append(style_tags)
 
     final_prompt = ", ".join(parts)
-    negative_prompt = job.negative_prompt or DEFAULT_NEGATIVE_PROMPT
+
+    negative_prompt = getattr(job, "negative_prompt", None) or DEFAULT_NEGATIVE_PROMPT
 
     return final_prompt, negative_prompt
