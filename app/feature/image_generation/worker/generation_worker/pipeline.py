@@ -40,6 +40,7 @@ from app.feature.image_generation.providers.storage_provider.storage_base import
 from app.feature.image_generation.repositories.generation_jobs import GenerationJobRepository
 from app.feature.image_generation.repositories.image_assets import ImageAssetRepository
 from generation_worker.db import get_worker_session
+from generation_worker.prompt_builder import build_prompt
 from generation_worker.errors import PermanentGenerationError, TemporaryGenerationError
 
 class GenerationPipeline:
@@ -73,7 +74,11 @@ class GenerationPipeline:
             job.status = GenerationStatus.PROCESSING
             db.commit()
 
-            result = self.image_provider.generate_image(job.prompt, job.aspect_ratio)
+
+            final_prompt, negative_prompt = build_prompt(job)
+            result = self.image_provider.generate_image(
+            final_prompt, negative_prompt, job.aspect_ratio
+             )
             stored = self.storage_provider.save_image(
                 job.id, result.image_bytes, result.mime_type
             )
@@ -95,7 +100,7 @@ class GenerationPipeline:
         except PermanentGenerationError as e:
             if job is not None:
                 job_repository.mark_job_failed(job.id, str(e))
-            # yahan raise NAHI karenge — RQ ko retry nahi karna
+            
 
         finally:
             db.close()
