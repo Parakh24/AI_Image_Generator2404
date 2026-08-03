@@ -8,7 +8,6 @@ storage backend (local disk, S3, etc). This is what lets us swap
 local disk for cloud storage later without touching worker code.
 """
 
-
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
