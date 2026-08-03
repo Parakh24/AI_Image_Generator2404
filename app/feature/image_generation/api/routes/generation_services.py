@@ -4,9 +4,7 @@ from app.feature.image_generation.services.generation_service import GenerationS
 """
 generation_service.py
 
-Service layer for image generation. Creates a job record, enqueues it
-for background processing, and fetches job status while enforcing
-that a job belongs to the requesting user.
+Service layer for image generation. 
 """
 
 from typing import Optional
