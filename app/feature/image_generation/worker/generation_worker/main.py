@@ -16,12 +16,15 @@ The worker is intentionally configured as a single process so that GPU-bound
 generation jobs execute sequentially. This helps prevent multiple jobs from
 using the same limited GPU resources at the same time.
 """
+"""RQ worker entry point for image-generation jobs."""
 
 import logging
 import os
+import socket
 
 from redis import Redis
-from rq import Queue, Worker
+from rq import Queue
+from rq.worker import SpawnWorker
 
 
 logging.basicConfig(
@@ -29,25 +32,20 @@ logging.basicConfig(
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
 )
 
-REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379")
-QUEUE_NAME = os.getenv("GENERATION_QUEUE_NAME", "generation")
+REDIS_URL = os.getenv(
+    "REDIS_URL",
+    "redis://localhost:6379",
+)
+
+QUEUE_NAME = os.getenv(
+    "GENERATION_QUEUE_NAME",
+    "generation",
+)
 
 
 def start_worker() -> None:
-    """Create and start the image-generation RQ worker.
+    """Start a Windows-compatible RQ image-generation worker."""
 
-    The function performs the following steps:
-
-    1. Connects to Redis using ``REDIS_URL``.
-    2. Creates or references the configured generation queue.
-    3. Creates a named RQ worker for that queue.
-    4. Starts the worker with scheduler support enabled.
-
-    Scheduler support is required for delayed retries, such as retry intervals
-    configured through ``rq.Retry``.
-
-    This call is blocking and keeps running until the worker is stopped.
-    """
     redis_conn = Redis.from_url(REDIS_URL)
 
     queue = Queue(
@@ -55,10 +53,14 @@ def start_worker() -> None:
         connection=redis_conn,
     )
 
-    worker = Worker(
+    worker = SpawnWorker(
         queues=[queue],
         connection=redis_conn,
-        name="generation-worker-1",
+        name=(
+            f"generation-worker-"
+            f"{socket.gethostname()}-"
+            f"{os.getpid()}"
+        ),
     )
 
     worker.work(with_scheduler=True)
