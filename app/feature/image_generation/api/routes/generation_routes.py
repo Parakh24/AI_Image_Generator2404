@@ -13,7 +13,13 @@ from app.database import get_db
 from app.feature.image_generation.models.generation_job import GenerationStatus
 from app.feature.image_generation.api.schemas.generation_request import GenerationCreateRequest
 from app.feature.image_generation.api.schemas.generation_response import GenerationResponse
-from app.feature.image_generation.services.generation_service import GenerationService
+from app.feature.image_generation.api.routes.generation_services import GenerationService
+from app.feature.image_generation.services.prompt_service import (
+    BusinessProfile,
+    PromptRequest,
+    prompt_service,
+)
+
 
 router = APIRouter(prefix="/api/image-generations", tags=["image-generations"])
 
@@ -33,16 +39,23 @@ def create_image_generation(
     2. GenerationCreateRequest schema has already validated the body
        (prompt not blank, aspect_ratio is one of the allowed values)
        before this function even runs
-    3. GenerationService.create_generation() creates the job record
+    3. GenerationService.start_generation() creates and queues the job
     4. The job id and status are returned immediately
 
     202 Accepted (not 200 OK) means "request accepted, processing
     not finished yet" - which is exactly what's true here.
     """
     service = GenerationService(db)
-    job = service.create_generation(
+    prompt_request = PromptRequest(
+        user_prompt=request.prompt,
+        business_profile=BusinessProfile(brand_name="your brand"),
+        preset=request.preset,
+    )
+    final_prompt = prompt_service.compile(prompt_request)
+
+    job = service.start_generation(
         user_id=user_id,
-        prompt=request.prompt,
+        prompt=final_prompt,
         aspect_ratio=request.aspect_ratio,
     )
     return GenerationResponse(job_id=job.id, status=job.status)
