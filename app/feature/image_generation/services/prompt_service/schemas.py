@@ -1,0 +1,25 @@
+from enum import Enum 
+from typing import Optional 
+from pydantic import BaseModel 
+
+
+class PromptPreset(str, Enum): 
+    SOCIAL_MEDIA_AD = "social_media_ad"
+    PRODUCT_SHOWCASE = "product_showcase"
+    PROMOTIONAL_BANNER = "promotional_banner"
+    GENERIC = "generic" 
+
+
+class BusinessProfile(BaseModel): 
+    brand_name: str 
+    primary_color: Optional[str] = None 
+    secondary_color: Optional[str] = None 
+    audience_demographics: Optional[str] = None 
+    tone: Optional[str] = None 
+
+
+class PromptRequest(BaseModel):
+        user_prompt: str 
+        business_profile: BusinessProfile 
+        preset: PromptPreset = PromptPreset.Generic 
+        
