@@ -1,61 +1,109 @@
-"""Category keywords and image-style boosts used by the prompt service.
+"""Electronics repair category keywords and image-style boosts.
 
-Add a category to both mappings below. The prompt builder detects keywords in
-the user's text and appends the corresponding style boost to the final prompt.
-
-
-1. the keywords used to detect it inside a free-text user prompt 
-2. the extra style phrase added to the final prompt when that category is detected 
-
-To add a new category, this is the ONLY file you should need to touch. 
+Every key in ``CATEGORY_KEYWORDS`` must have a matching entry in
+``CATEGORY_STYLE_BOOST`` so the prompt builder can enrich detected categories.
 """
 
 from typing import Dict, List
 
 
 CATEGORY_KEYWORDS: Dict[str, List[str]] = {
-    "smart_watches": ["watch", "smartwatch", "smart watch", "wristwatch", "wearable"],
-    "electronics_repair": ["electronics repair", "device repair", "phone repair", "screen repair", "phone screen", "circuit board", "soldering", "repair shop"],
-    "consumer_electronics": ["smartphone", "phone", "laptop", "tablet", "headphones", "earbuds", "speaker", "camera", "gadget", "electronics"],
-    "fashion": ["fashion", "clothing", "apparel", "dress", "shirt", "jacket", "jeans", "outfit", "streetwear"],
-    "footwear": ["shoes", "shoe", "sneakers", "sneaker", "boots", "sandals", "footwear"],
-    "jewelry": ["jewelry", "jewellery", "necklace", "ring", "bracelet", "earrings", "pendant", "gemstone"],
-    "beauty_and_skincare": ["beauty", "skincare", "skin care", "cosmetics", "makeup", "serum", "moisturizer", "lipstick", "foundation"],
-    "food_and_beverage": ["food", "restaurant", "cafe", "coffee", "drink", "beverage", "meal", "dish", "dessert", "bakery", "snack"],
-    "health_and_fitness": ["fitness", "gym", "workout", "exercise", "wellness", "yoga", "sports", "health supplement", "protein powder"],
-    "home_and_furniture": ["furniture", "sofa", "chair", "table", "bed", "home decor", "interior", "lamp", "kitchenware"],
-    "automotive": ["automotive", "car", "vehicle", "motorcycle", "bike", "tyre", "tire", "auto parts", "car service"],
-    "real_estate": ["real estate", "property", "apartment", "house", "villa", "office space", "home listing"],
-    "travel_and_hospitality": ["travel", "tourism", "hotel", "resort", "vacation", "holiday", "flight", "tour package", "destination"],
-    "education": ["education", "school", "college", "university", "course", "classroom", "online learning", "training program"],
-    "financial_services": ["finance", "banking", "insurance", "investment", "loan", "credit card", "fintech", "savings"],
-    "software_and_saas": ["software", "saas", "app", "platform", "dashboard", "cloud service", "cybersecurity", "automation"],
-    "professional_services": ["consulting", "agency", "legal services", "law firm", "accounting", "business services", "professional services"],
-    "pets": ["pet", "pets", "dog", "cat", "pet food", "pet care", "veterinary"],
-    "baby_and_kids": ["baby", "kids", "children", "toy", "toys", "stroller", "nursery", "children's clothing"],
-    "books_and_stationery": ["book", "books", "stationery", "notebook", "journal", "pen", "planner", "office supplies"],
+
+
+    "mobile_repair_shop":   ["mobile repair","mobile phone repair","phone repair","smartphone repair",
+                           "screen replacement","phone screen","battery replacement",
+                           "charging port repair",
+    ],
+
+    "laptop_repair_center": ["laptop repair","notebook repair","laptop service","laptop screen repair",
+                             "laptop motherboard repair","laptop battery replacement",
+    ],
+
+
+    "computer_desktop_repair": ["computer repair","desktop repair","pc repair","computer service",
+                                "desktop service","pc troubleshooting","computer hardware repair",  
+    ],
+
+    "tv_repair": ["tv repair","television repair","led tv repair","lcd tv repair","smart tv repair",
+                   "tv service center","display panel repair",
+    ],
+
+
+    "home_appliance_repair": ["home appliance repair","appliance repair","appliance service",
+                              "kitchen appliance repair","multi appliance repair","household appliance repair",
+    ],
+
+
+    "ac_repair_and_service": ["ac repair","ac service","air conditioner repair","air conditioning service",
+                              "ac installation","ac maintenance","ac gas refill",
+    ],
+
+                              
+    "refrigerator_repair": ["refrigerator repair","fridge repair","refrigerator service","fridge service",
+                            "freezer repair","refrigerator cooling problem",
+    ],
+
+
+    "washing_machine_repair": ["washing machine repair","washing machine service","washer repair",
+                               "laundry machine repair","washing machine installation","washing machine maintenance",
+    ],
+
+
+    "inverter_ups_repair": ["inverter repair","ups repair","inverter service","ups service",
+                            "power backup repair","inverter battery service",
+    ],
+
+
+    "electronics_service_center": ["electronics service center","electronic service center",
+                                   "multi brand service center","multi-brand service center",
+                                   "electronics repair center","electronic device repair",
+                                   "electronics repair shop",
+    ],
+
+
+    "cctv_installation_and_repair": ["cctv installation","cctv repair","security camera installation",
+                                     "security camera repair","surveillance system repair","cctv service",
+                                     "dvr repair","nvr repair",
+    ],
+
+
+    "printer_scanner_repair": ["printer repair","scanner repair","printer service","scanner service",
+                               "printer maintenance","laser printer repair","inkjet printer repair",
+    ],
+
+
+    "camera_repair_center": ["camera repair","dslr repair","digital camera repair","camera service center",
+                             "camera lens repair","mirrorless camera repair","camera sensor cleaning",
+    ],
+
+
+    "gaming_console_repair": ["gaming console repair","game console repair","playstation repair",
+                              "ps4 repair","ps5 repair","xbox repair","nintendo repair",
+                              "nintendo switch repair","console controller repair",
+    ],
+
+
+    "smartwatch_wearable_repair": ["smartwatch repair","smart watch repair","wearable device repair",
+                                   "fitness tracker repair","apple watch repair",
+                                   "smartwatch screen replacement","smartwatch battery replacement",
+    ],
 }
 
 
 CATEGORY_STYLE_BOOST: Dict[str, str] = {
-    "smart_watches": "close-up wrist shot, sleek band, crisp digital display, premium wearable photography",
-    "electronics_repair": "clean workshop lighting, precision tools in frame, intricate technical detail",
-    "consumer_electronics": "sleek product lighting, reflective surfaces, modern technology aesthetic, crisp details",
-    "fashion": "editorial fashion photography, confident styling, premium fabric texture, dynamic pose",
-    "footwear": "low-angle product shot, detailed materials, clean backdrop, premium commercial lighting",
-    "jewelry": "luxury macro photography, elegant highlights, refined reflections, exquisite craftsmanship",
-    "beauty_and_skincare": "soft beauty lighting, luminous skin tones, clean vanity aesthetic, premium packaging",
-    "food_and_beverage": "appetizing food photography, fresh ingredients, rich texture, warm natural lighting",
-    "health_and_fitness": "energetic composition, athletic movement, motivational atmosphere, high-contrast lighting",
-    "home_and_furniture": "inviting interior styling, balanced composition, natural light, tactile materials",
-    "automotive": "dramatic automotive photography, sculpted reflections, dynamic angle, cinematic lighting",
-    "real_estate": "wide-angle architectural photography, bright natural light, spacious composition, polished interiors",
-    "travel_and_hospitality": "aspirational travel photography, scenic depth, warm sunlight, welcoming atmosphere",
-    "education": "bright learning environment, approachable people, clear educational context, optimistic mood",
-    "financial_services": "trustworthy corporate aesthetic, clean composition, subtle financial motifs, polished lighting",
-    "software_and_saas": "modern digital workspace, clean interface presentation, subtle technology motifs, crisp lighting",
-    "professional_services": "professional corporate photography, confident composition, refined office setting, credible tone",
-    "pets": "warm lifestyle photography, expressive animal subject, playful energy, soft natural light",
-    "baby_and_kids": "bright playful setting, gentle pastel accents, joyful expression, soft diffused lighting",
-    "books_and_stationery": "thoughtful flat-lay composition, tactile paper detail, organized desk styling, soft natural light",
+    "mobile_repair_shop": "professional mobile repair counter, smartphone diagnostics, precision tools, clean technical lighting",
+    "laptop_repair_center": "organized laptop repair bench, open laptop hardware, diagnostic equipment, skilled technician at work",
+    "computer_desktop_repair": "professional computer workshop, desktop components, hardware diagnostics, tidy anti-static workspace",
+    "tv_repair": "modern television service area, illuminated display panel, careful diagnostics, clean workshop environment",
+    "home_appliance_repair": "professional home appliance service scene, experienced technician, practical tools, trustworthy local-service aesthetic",
+    "ac_repair_and_service": "air-conditioner service scene, trained HVAC technician, maintenance tools, bright clean residential setting",
+    "refrigerator_repair": "refrigerator servicing scene, cooling-system diagnostics, professional technician, clean home environment",
+    "washing_machine_repair": "washing-machine service scene, open control panel, repair tools, skilled technician in a bright utility area",
+    "inverter_ups_repair": "power-backup repair bench, inverter and UPS components, electrical testing equipment, precise technical detail",
+    "electronics_service_center": "modern multi-brand electronics service center, organized repair stations, diagnostic devices, professional customer-service atmosphere",
+    "cctv_installation_and_repair": "professional CCTV installation scene, security cameras and cabling, technician at work, crisp surveillance technology detail",
+    "printer_scanner_repair": "organized printer service workspace, open printer mechanism, diagnostic tools, clean office-technology aesthetic",
+    "camera_repair_center": "precision camera repair bench, DSLR and lens components, delicate tools, premium macro technical photography",
+    "gaming_console_repair": "modern gaming-console repair setup, console internals and controllers, neon-accented workshop lighting, detailed electronics work",
+    "smartwatch_wearable_repair": "close-up wearable-device repair, smartwatch internals, precision micro-tools, crisp screen and component detail",
 }
