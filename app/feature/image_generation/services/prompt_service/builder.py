@@ -1,7 +1,31 @@
+import re
+
+from app.feature.image_generation.services.prompt_service.categories import (
+    CATEGORY_KEYWORDS,
+    CATEGORY_STYLE_BOOST,
+)
 from app.feature.image_generation.services.prompt_service.presets import PRESET_STYLE_WORDS
 from app.feature.image_generation.services.prompt_service.schemas import PromptPreset , BusinessProfile
 
 _LEADING_VERBS = ("create" , "generate" , "make" , "design" , "produce" , "build" , "develop" , "assemble")
+
+
+def _detect_category(user_prompt: str, default_category: str | None = None) -> str | None:
+    """Return the first category whose complete keyword occurs in the prompt."""
+    normalized_prompt = user_prompt.casefold().replace("_", " ").replace("-", " ")
+    for category, keywords in CATEGORY_KEYWORDS.items():
+        if any(
+            re.search(rf"(?<!\w){re.escape(keyword.casefold())}(?!\w)", normalized_prompt)
+            for keyword in keywords
+        ):
+            return category
+
+    if default_category:
+        normalized_default = default_category.strip().casefold().replace("-", " ").replace("_", " ")
+        for category in CATEGORY_KEYWORDS:
+            if normalized_default == category.replace("_", " "):
+                return category
+    return None
 
 
 
@@ -27,6 +51,11 @@ def build_final_prompt(
 ) -> str:  
     style_word = PRESET_STYLE_WORDS.get(preset, PRESET_STYLE_WORDS[PromptPreset.GENERIC])
     subject = _normalize_user_prompt(user_prompt)
+
+    category = _detect_category(user_prompt, business_profile.default_category)
+    category_boost = CATEGORY_STYLE_BOOST.get(category) if category else None
+    if category_boost:
+        style_word = f"{style_word}, {category_boost}"
 
     sentences = [f"Create a {style_word} {subject} for {business_profile.brand_name}."]
 
