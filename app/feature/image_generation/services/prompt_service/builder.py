@@ -30,14 +30,14 @@ def build_final_prompt(
 
     sentences = [f"Create a {style_word} {subject} for {business_profile.brand_name}."]
 
-    if business_profile.primary_color: 
-        sentences.append(f"Use the primary color {business_profile.primary_colour} as the primary colour")
+    if business_profile.primary_color:
+        sentences.append(f"Use the primary color {business_profile.primary_color} as the primary color.")
 
-    if business_profile.secondary_colour:
-        sentences.append(f"Use the secondary colour {business_profile.secondary_colour} as the accent colour")
+    if business_profile.secondary_color:
+        sentences.append(f"Use the secondary color {business_profile.secondary_color} as the accent color.")
 
-    if business_profile.audience:
-        sentences.append(f"Target the following audience: {business_profile.audience}")
+    if business_profile.audience_demographics:
+        sentences.append(f"Target the following audience: {business_profile.audience_demographics}.")
 
     if business_profile.tone:
         sentences.append(f"The overall tone should feel {business_profile.tone}.")
