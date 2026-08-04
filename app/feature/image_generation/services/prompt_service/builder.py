@@ -6,6 +6,10 @@ from app.feature.image_generation.services.prompt_service.categories import (
 )
 from app.feature.image_generation.services.prompt_service.presets import PRESET_STYLE_WORDS
 from app.feature.image_generation.services.prompt_service.schemas import PromptPreset , BusinessProfile
+from app.feature.image_generation.services.prompt_service.categories import CATEGORY_STYLE_BOOST
+from app.feature.image_generation.services.prompt_service.categorizer import detect_category
+
+
 
 _LEADING_VERBS = ("create" , "generate" , "make" , "design" , "produce" , "build" , "develop" , "assemble")
 
@@ -70,6 +74,14 @@ def build_final_prompt(
 
     if business_profile.tone:
         sentences.append(f"The overall tone should feel {business_profile.tone}.")
+
+    # Category detection: layer 2 (prompt keywords) checked before
+    # layer 1 (business default). See categorizer.py for the full logic.
+    category = detect_category(user_prompt, business_profile)
+    if category is not None:
+        style_boost = CATEGORY_STYLE_BOOST.get(category)
+        if style_boost:
+            sentences.append(f"Include: {style_boost}.")
 
     return " ".join(sentences) 
                                          
