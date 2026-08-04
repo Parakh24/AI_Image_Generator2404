@@ -19,7 +19,7 @@ class BusinessProfile(BaseModel):
 
 
 class PromptRequest(BaseModel):
-        user_prompt: str 
-        business_profile: BusinessProfile 
-        preset: PromptPreset = PromptPreset.Generic 
+    user_prompt: str
+    business_profile: BusinessProfile
+    preset: PromptPreset = PromptPreset.GENERIC
         
