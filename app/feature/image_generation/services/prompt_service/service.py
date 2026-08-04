@@ -2,7 +2,7 @@ from app.feature.image_generation.services.prompt_service.builder import build_f
 from app.feature.image_generation.services.prompt_service.schemas import PromptRequest 
 
 """
-This file is majorly used by the api/routes service or worker service, they do not need to enter into 
+This file is majorly used by the api/routes service, they do not need to enter into 
 the details of how the prompt is built, they just need to call this service and get the final prompt.
 """
 
