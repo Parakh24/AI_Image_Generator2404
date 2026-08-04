@@ -8,8 +8,10 @@ layer - FastAPI automatically sends back a 422 error to the client.
 """
 
 from typing import Literal
-
+from app.feature.image_generation.services.prompt_service import PromptPreset
 from pydantic import BaseModel, Field, field_validator
+
+
 
 # Only these 3 values are allowed - any other value gets automatically
 # rejected by FastAPI, no manual check needed.
@@ -32,6 +34,8 @@ class GenerationCreateRequest(BaseModel):
         default="1:1",
         description="Allowed values: 1:1, 16:9, 9:16",
     )
+
+    preset: PromptPreset = PromptPreset.GENERIC
 
     @field_validator("prompt")
     @classmethod
