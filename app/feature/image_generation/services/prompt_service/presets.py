@@ -3,7 +3,7 @@ from app.feature.image_generation.services.prompt_service.schemas import PromptP
 
 PRESET_STYLE_WORDS: dict[PromptPreset, str] = {
     PromptPreset.SOCIAL_MEDIA_AD: "modern",
-    PromptPreset.PRODUCTSHOWCASE: "clean, professional",
+    PromptPreset.PRODUCT_SHOWCASE: "clean, professional",
     PromptPreset.PROMOTIONAL_BANNER: "eye-catching, bold",
     PromptPreset.GENERIC: "high quality, visually appealing",
 }
