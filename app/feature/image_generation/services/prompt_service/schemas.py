@@ -16,6 +16,7 @@ class BusinessProfile(BaseModel):
     secondary_color: Optional[str] = None 
     audience_demographics: Optional[str] = None 
     tone: Optional[str] = None 
+    default_category: Optional[str] = None
 
 
 class PromptRequest(BaseModel):
@@ -23,3 +24,5 @@ class PromptRequest(BaseModel):
     business_profile: BusinessProfile
     preset: PromptPreset = PromptPreset.GENERIC
         
+
+
