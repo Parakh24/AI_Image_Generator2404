@@ -60,4 +60,5 @@ def init_db():
     """
     from app.feature.image_generation.models.generation_job import GenerationJob  # noqa: F401
     from app.feature.image_generation.models.image_asset import ImageAsset  # noqa: F401
+    from app.business_profiles.models import BusinessProfile
     Base.metadata.create_all(bind=engine)
