@@ -32,5 +32,6 @@ def enqueue_generation_job(job_id: str) -> None:
     exist yet.
     """
     generation_queue.enqueue(
-        "app.worker.generation_worker.process_generation_job", job_id
+        "app.feature.image_generation.worker.generation_worker.tasks.process_generation_job",
+        job_id,
     )
