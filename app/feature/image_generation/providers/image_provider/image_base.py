@@ -24,6 +24,10 @@ class ImageGenerationResult:
     provider_request_id: str
 
 
+class ImageProviderError(Exception):
+    """Base error raised by image provider adapters."""
+
+
 class ImageProvider(ABC): 
     """
     Interface every image provider adapter must implement. 
@@ -32,8 +36,10 @@ class ImageProvider(ABC):
     """
 
     @abstractmethod
-    def generate_image(self, prompt: str, aspect_ratio: str) -> ImageGenerationResult: 
+    def generate_image(
+        self, prompt: str, negative_prompt: str, aspect_ratio: str
+    ) -> ImageGenerationResult:
         """
         Generates one image and returns it in the standardized shape
         """
-        raise NotImplementedError 
+        raise NotImplementedError
