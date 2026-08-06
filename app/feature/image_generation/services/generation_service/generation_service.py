@@ -23,14 +23,17 @@ class GenerationService:
         self.asset_repo = ImageAssetRepository(db)
 
     def start_generation(
-        self, user_id: str, prompt: str, aspect_ratio: str
+        self, user_id: str, profile_id: str, prompt: str, aspect_ratio: str
     ) -> GenerationJob:
         """
         Creates a new job record with status PENDING, saves it,
         and enqueues it for the background worker to pick up.
         """
         job = self.job_repo.create_job(
-            user_id=user_id, prompt=prompt, aspect_ratio=aspect_ratio
+            user_id=user_id,
+            profile_id=profile_id,
+            prompt=prompt,
+            aspect_ratio=aspect_ratio,
         )
         self.db.commit()
 
