@@ -24,6 +24,7 @@ class GenerationCreateRequest(BaseModel):
     image generation job.
     """
 
+    profile_id: str
     prompt: str = Field(
         ...,
         min_length=1,
