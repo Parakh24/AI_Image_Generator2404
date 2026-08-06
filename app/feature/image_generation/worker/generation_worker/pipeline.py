@@ -39,9 +39,12 @@ from app.feature.image_generation.providers.image_provider.image_base import Ima
 from app.feature.image_generation.providers.storage_provider.storage_base import StorageProvider
 from app.feature.image_generation.repositories.generation_jobs import GenerationJobRepository
 from app.feature.image_generation.repositories.image_assets import ImageAssetRepository
-from generation_worker.db import get_worker_session
-from generation_worker.prompt_builder import build_prompt
-from generation_worker.errors import PermanentGenerationError, TemporaryGenerationError
+from app.feature.image_generation.providers.image_provider.image_base import ImageProviderError
+from app.feature.image_generation.providers.storage_provider.storage_base import StorageProviderError
+
+from .db import get_worker_session
+from .errors import PermanentGenerationError, TemporaryGenerationError
+from .prompt_builder import build_prompt
 
 class GenerationPipeline:
     def __init__(
@@ -54,7 +57,7 @@ class GenerationPipeline:
         self.image_provider = image_provider
         self.storage_provider = storage_provider
 
-    def run(self):
+    def run(self) -> None:
         db = get_worker_session()
         job_repository = GenerationJobRepository(db)
         image_asset_repository = ImageAssetRepository(db)
@@ -77,8 +80,8 @@ class GenerationPipeline:
 
             final_prompt, negative_prompt = build_prompt(job)
             result = self.image_provider.generate_image(
-            final_prompt, negative_prompt, job.aspect_ratio
-             )
+                final_prompt, negative_prompt, job.aspect_ratio
+            )
             stored = self.storage_provider.save_image(
                 job.id, result.image_bytes, result.mime_type
             )
@@ -91,16 +94,21 @@ class GenerationPipeline:
             )
             job_repository.mark_job_completed(job.id)
 
-        except TemporaryGenerationError as e:
+        except (ImageProviderError, StorageProviderError) as exc:
             if job is not None:
-                job.error_message = str(e)
+                job.error_message = str(exc)
                 db.commit()
-            raise  # RQ ko dobara try karne do
+            raise TemporaryGenerationError(str(exc)) from exc
 
-        except PermanentGenerationError as e:
+        except TemporaryGenerationError as exc:
             if job is not None:
-                job_repository.mark_job_failed(job.id, str(e))
-            
+                job.error_message = str(exc)
+                db.commit()
+            raise
+
+        except PermanentGenerationError as exc:
+            if job is not None:
+                job_repository.mark_job_failed(job.id, str(exc))
 
         finally:
             db.close()
