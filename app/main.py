@@ -1,0 +1,20 @@
+"""
+main.py
+
+Entry point for the FastAPI application.
+
+This is the file uvicorn points to when starting the server:
+    uvicorn app.main:app --reload
+
+Its only responsibility is to create the FastAPI app instance and
+register (include) each feature's router. No business logic belongs
+in this file -- that lives inside each feature's own routes/services.
+"""
+
+from fastapi import FastAPI
+
+from app.feature.image_generation.api.routes.generation_routes import router as generation_router
+
+app = FastAPI(title="CRMJIO Image Generation Service")
+
+app.include_router(generation_router) 
