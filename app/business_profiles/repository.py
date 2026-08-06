@@ -1,7 +1,7 @@
 # app/business_profiles/repository.py
 
 from sqlalchemy.orm import Session
-from app.business_profiles.models.business_profile import BusinessProfile
+from app.business_profiles.models import BusinessProfile
 from app.business_profiles.schemas import BusinessProfileCreate
 
 
