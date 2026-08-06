@@ -15,6 +15,7 @@ CATEGORY_KEYWORDS: Dict[str, List[str]] = {
                            "charging port repair",
     ],
 
+
     "laptop_repair_center": ["laptop repair","notebook repair","laptop service","laptop screen repair",
                              "laptop motherboard repair","laptop battery replacement",
     ],
@@ -22,6 +23,7 @@ CATEGORY_KEYWORDS: Dict[str, List[str]] = {
 
     "computer_desktop_repair": ["computer repair","desktop repair","pc repair","computer service",
                                 "desktop service","pc troubleshooting","computer hardware repair",  
+
     ],
 
     "tv_repair": ["tv repair","television repair","led tv repair","lcd tv repair","smart tv repair",
@@ -92,18 +94,46 @@ CATEGORY_KEYWORDS: Dict[str, List[str]] = {
 
 CATEGORY_STYLE_BOOST: Dict[str, str] = {
     "mobile_repair_shop": "professional mobile repair counter, smartphone diagnostics, precision tools, clean technical lighting",
+
+
     "laptop_repair_center": "organized laptop repair bench, open laptop hardware, diagnostic equipment, skilled technician at work",
+
+
     "computer_desktop_repair": "professional computer workshop, desktop components, hardware diagnostics, tidy anti-static workspace",
+
+
     "tv_repair": "modern television service area, illuminated display panel, careful diagnostics, clean workshop environment",
+
+
     "home_appliance_repair": "professional home appliance service scene, experienced technician, practical tools, trustworthy local-service aesthetic",
+
+
     "ac_repair_and_service": "air-conditioner service scene, trained HVAC technician, maintenance tools, bright clean residential setting",
+
+
     "refrigerator_repair": "refrigerator servicing scene, cooling-system diagnostics, professional technician, clean home environment",
+
+
     "washing_machine_repair": "washing-machine service scene, open control panel, repair tools, skilled technician in a bright utility area",
+
+
     "inverter_ups_repair": "power-backup repair bench, inverter and UPS components, electrical testing equipment, precise technical detail",
+
+
     "electronics_service_center": "modern multi-brand electronics service center, organized repair stations, diagnostic devices, professional customer-service atmosphere",
+
+
     "cctv_installation_and_repair": "professional CCTV installation scene, security cameras and cabling, technician at work, crisp surveillance technology detail",
+
+
     "printer_scanner_repair": "organized printer service workspace, open printer mechanism, diagnostic tools, clean office-technology aesthetic",
+
+
     "camera_repair_center": "precision camera repair bench, DSLR and lens components, delicate tools, premium macro technical photography",
+
+
     "gaming_console_repair": "modern gaming-console repair setup, console internals and controllers, neon-accented workshop lighting, detailed electronics work",
+    
+
     "smartwatch_wearable_repair": "close-up wearable-device repair, smartwatch internals, precision micro-tools, crisp screen and component detail",
 }
