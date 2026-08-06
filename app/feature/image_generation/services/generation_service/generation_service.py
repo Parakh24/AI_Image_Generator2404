@@ -35,7 +35,7 @@ class GenerationService:
         self.db.commit()
 
         generation_queue.enqueue(
-            "generation_worker.tasks.process_generation_job",
+            "app.feature.image_generation.worker.generation_worker.tasks.process_generation_job",
             job.id,
             retry=Retry(max=3, interval=[10, 30, 90]),
         )
