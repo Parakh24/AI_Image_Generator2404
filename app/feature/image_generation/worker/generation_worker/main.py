@@ -1,5 +1,10 @@
 """RQ worker entry point for image-generation jobs.
 
+On Windows, start this module through ``worker/start_worker.cmd`` or run
+``python -m app.feature.image_generation.worker.generation_worker.main``.
+Do not use the bare ``rq worker`` command: its default worker calls
+``os.fork()``, which Windows does not provide.
+
 This module configures and starts a single RQ worker that listens to the
 image-generation queue stored in Redis.
 
@@ -16,15 +21,13 @@ The worker is intentionally configured as a single process so that GPU-bound
 generation jobs execute sequentially. This helps prevent multiple jobs from
 using the same limited GPU resources at the same time.
 """
-"""RQ worker entry point for image-generation jobs."""
-
 import logging
 import os
 import socket
 
 from redis import Redis
 from rq import Queue
-from rq.worker import SpawnWorker
+from rq.worker import SimpleWorker
 
 
 logging.basicConfig(
@@ -53,7 +56,10 @@ def start_worker() -> None:
         connection=redis_conn,
     )
 
-    worker = SpawnWorker(
+    # SimpleWorker executes one job at a time in this process. Unlike RQ's
+    # default Worker it does not call os.fork(), and unlike SpawnWorker in the
+    # installed RQ version it does not call the Unix-only os.setpgrp().
+    worker = SimpleWorker(
         queues=[queue],
         connection=redis_conn,
         name=(
