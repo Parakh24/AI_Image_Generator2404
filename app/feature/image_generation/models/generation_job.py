@@ -41,6 +41,7 @@ class GenerationJob(Base):
 
     id = Column(String(50), primary_key=True, default=generate_job_id)
     user_id = Column(String(50), nullable=False, index=True)
+    profile_id = Column(String(50), nullable=False)
     prompt = Column(Text, nullable=False)
     aspect_ratio = Column(String(10), nullable=False, default="1:1")
     status = Column(Enum(GenerationStatus), nullable=False, default=GenerationStatus.PENDING, index=True)
