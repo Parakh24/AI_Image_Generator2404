@@ -55,6 +55,7 @@ def create_image_generation(
 
     job = service.start_generation(
         user_id=user_id,
+        profile_id=request.profile_id,
         prompt=final_prompt,
         aspect_ratio=request.aspect_ratio,
     )
