@@ -16,7 +16,7 @@ from app.feature.image_generation.api.routes.generation_routes import router as 
 from app.business_profiles.routes import router as business_profiles_router
 
 
-include_router(business_profiles_router)
+(business_profiles_router)
 
 
 app = FastAPI(title="CRMJIO Image Generation Service")
