@@ -12,8 +12,12 @@ in this file -- that lives inside each feature's own routes/services.
 """
 
 from fastapi import FastAPI
-
 from app.feature.image_generation.api.routes.generation_routes import router as generation_router
+from app.business_profiles.routes import router as business_profiles_router
+
+
+include_router(business_profiles_router)
+
 
 app = FastAPI(title="CRMJIO Image Generation Service")
 
