@@ -28,13 +28,18 @@ class GenerationJobRepository:
 
 
       def create_job(
-              self, user_id: str, prompt: str, aspect_ratio:str = "1:1"
+              self, user_id: str, profile_id: str, prompt: str, aspect_ratio:str = "1:1"
       ) -> GenerationJob: 
         """
           Inserts new row with "PENDING" status. When the user submits the prompt, 
           this function gets called before the image generation starts.
         """
-        job = GenerationJob(user_id=user_id, prompt=prompt, aspect_ratio=aspect_ratio)
+        job = GenerationJob(
+            user_id=user_id,
+            profile_id=profile_id,
+            prompt=prompt,
+            aspect_ratio=aspect_ratio,
+        )
         self.db.add(job)
         self.db.commit()
         self.db.refresh(job)  # DB-generated fields (id, created_at) wapas le aata hai
@@ -101,4 +106,4 @@ class GenerationJobRepository:
          job.completed_at = datetime.now(timezone.utc) 
          self.db.commit() 
          self.db.refresh(job) 
-         return job 
+         return job
