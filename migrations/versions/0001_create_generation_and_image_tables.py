@@ -35,8 +35,8 @@ def upgrade():
         sa.Column("updated_at", sa.DateTime(timezone=True), nullable=False),
         sa.Column("completed_at", sa.DateTime(timezone=True), nullable=True),
     )
-    # id is already unique because it's the primary key - no extra
-    # unique constraint needed for that rule.
+    
+    # Indexes for fast filtering
     op.create_index("ix_generation_jobs_user_id", "generation_jobs", ["user_id"])
     op.create_index("ix_generation_jobs_status", "generation_jobs", ["status"])
 
@@ -60,15 +60,14 @@ def upgrade():
 
 def downgrade():
     """Remove the image-assets and generation-jobs schema created above."""
-    # Drop child table first (it has a foreign key into generation_jobs)
+    # Drop child table first
     op.drop_index("ix_image_assets_job_id", table_name="image_assets")
     op.drop_table("image_assets")
 
+    # Drop generation_jobs table & indexes
     op.drop_index("ix_generation_jobs_status", table_name="generation_jobs")
     op.drop_index("ix_generation_jobs_user_id", table_name="generation_jobs")
     op.drop_table("generation_jobs")
 
-    # Postgres keeps the enum type around after the table is dropped -
-    # drop it explicitly or the next migration that recreates it will fail.
-    # Harmless no-op on SQLite.
+    # Drop Postgres Enum explicitly
     sa.Enum(name="generationstatus").drop(op.get_bind(), checkfirst=True)
