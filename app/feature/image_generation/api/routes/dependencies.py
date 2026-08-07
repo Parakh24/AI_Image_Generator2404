@@ -1,11 +1,16 @@
-"""
-dependencies.py
+"""Provide the current user's identity to protected API routes.
 
-TEMPORARY stub for "who is making this request". Real authentication
-(login, JWT tokens, sessions) has not been built yet in this project.
-Every route that needs to know the current user depends on this
-function - once real auth exists, only this file changes, no route
-code needs to change.
+FastAPI routes can declare ``get_current_user_id`` as a dependency when they
+need to know which user sent a request. For now, the dependency reads the user
+ID directly from the ``X-User-ID`` HTTP header. It rejects requests when that
+header is missing or contains only whitespace.
+
+This header-based approach is a temporary development placeholder, not secure
+authentication. A client can claim any user ID because no password, session,
+or signed access token is verified. In production, this function should verify
+a trusted login credential such as a JWT and return the authenticated user's
+ID. Keeping this responsibility in one dependency allows the authentication
+method to be replaced later without changing every route that uses it.
 """
 
 from typing import Optional
@@ -14,11 +19,22 @@ from fastapi import Header, HTTPException, status
 
 
 def get_current_user_id(x_user_id: Optional[str] = Header(default=None)) -> str:
-    """
-    STUB ONLY - reads the user id directly from a request header.
-    This is NOT secure: anyone can put any user id in this header
-    and pretend to be that user. Replace this with real token
-    verification before this goes anywhere near production.
+    """Read and validate the temporary ``X-User-ID`` request header.
+
+    Args:
+        x_user_id: The value supplied in the request's ``X-User-ID`` header.
+            FastAPI passes ``None`` when the header is not present.
+
+    Returns:
+        The user ID after removing whitespace from its beginning and end.
+
+    Raises:
+        HTTPException: Returns HTTP 401 when the header is missing or blank.
+
+    Warning:
+        This function identifies a user but does not securely authenticate
+        them. Replace the header check with real credential verification
+        before using the application in production.
     """
     if x_user_id is None or not x_user_id.strip():
         raise HTTPException(
