@@ -47,17 +47,21 @@ from .errors import PermanentGenerationError, TemporaryGenerationError
 from .prompt_builder import build_prompt
 
 class GenerationPipeline:
+    """Run every processing step for one queued image-generation job."""
+
     def __init__(
         self,
         job_id: str,
         image_provider: ImageProvider,
         storage_provider: StorageProvider,
     ):
+        """Store the job ID and provider implementations used by the pipeline."""
         self.job_id = job_id
         self.image_provider = image_provider
         self.storage_provider = storage_provider
 
     def run(self) -> None:
+        """Generate and save an image while recording the job's database state."""
         db = get_worker_session()
         job_repository = GenerationJobRepository(db)
         image_asset_repository = ImageAssetRepository(db)

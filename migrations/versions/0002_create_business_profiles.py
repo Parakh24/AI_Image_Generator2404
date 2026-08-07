@@ -15,6 +15,7 @@ depends_on = None
 
 
 def upgrade():
+    """Create the table that stores submitted business-profile forms."""
     op.create_table(
         "business_profiles",
         sa.Column("id", sa.String(length=50), primary_key=True),
@@ -33,4 +34,5 @@ def upgrade():
 
 
 def downgrade():
+    """Remove the business-profiles table."""
     op.drop_table("business_profiles")

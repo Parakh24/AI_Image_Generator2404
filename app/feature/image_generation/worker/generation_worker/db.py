@@ -1,4 +1,4 @@
-# worker/generation_worker/db.py 
+"""Database-session helper used by the background worker."""
 
 from app.database import SessionLocal 
 
@@ -9,4 +9,4 @@ def get_worker_session():
     a separate thread from the main FASTAPI app, and we want to avoid sharing sessions 
     across threads. """
 
-    return SessionLocal() 
+    return SessionLocal()

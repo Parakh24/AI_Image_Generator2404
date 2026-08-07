@@ -15,6 +15,7 @@ depends_on = None
 
 
 def upgrade():
+    """Create the generation-jobs and image-assets tables and their indexes."""
     op.create_table(
         "generation_jobs",
         sa.Column("id", sa.String(length=50), primary_key=True),
@@ -58,6 +59,7 @@ def upgrade():
 
 
 def downgrade():
+    """Remove the image-assets and generation-jobs schema created above."""
     # Drop child table first (it has a foreign key into generation_jobs)
     op.drop_index("ix_image_assets_job_id", table_name="image_assets")
     op.drop_table("image_assets")

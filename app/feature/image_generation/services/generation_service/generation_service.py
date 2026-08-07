@@ -17,7 +17,10 @@ from app.feature.image_generation.services.generation_service.queue_client impor
 
 
 class GenerationService:
+    """Coordinate job records, queue submission, and generation-result lookup."""
+
     def __init__(self, db: Session):
+        """Create repositories that share the request's database session."""
         self.db = db
         self.job_repo = GenerationJobRepository(db)
         self.asset_repo = ImageAssetRepository(db)

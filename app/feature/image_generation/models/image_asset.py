@@ -1,3 +1,5 @@
+"""Database model for metadata about generated image files."""
+
 import uuid  
 from datetime import datetime , timezone 
 from sqlalchemy import Column, String, Integer, DateTime, ForeignKey 

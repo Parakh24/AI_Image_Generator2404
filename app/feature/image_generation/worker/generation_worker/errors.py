@@ -1,5 +1,7 @@
+"""Worker exceptions that distinguish retryable and permanent failures."""
+
 class TemporaryGenerationError(Exception):
-    """Network timeout, GPU busy, provider 5xx — retry karne layak"""
+    """Report a temporary failure for which retrying the job may succeed."""
 
 class PermanentGenerationError(Exception):
-    """Invalid prompt, safety filter block, missing LoRA file — retry se fayda nahi"""
+    """Report a permanent failure that should not be retried."""

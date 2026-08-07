@@ -1,4 +1,4 @@
-# app/business_profiles/models/business_profile.py
+"""Database model for storing a business's branding information."""
 
 import uuid
 from datetime import datetime
@@ -7,10 +7,12 @@ from app.database import Base
 
 
 def generate_uuid() -> str:
+    """Return a new UUID string for a business-profile primary key."""
     return str(uuid.uuid4())
 
 
 class BusinessProfile(Base):
+    """Represent one business profile stored in the database."""
     __tablename__ = "business_profiles"
 
     id = Column(String(50), primary_key=True, default=generate_uuid)

@@ -1,4 +1,4 @@
-# app/business_profiles/service.py
+"""Service layer for business-profile creation and lookup."""
 
 from app.database import SessionLocal
 from app.business_profiles.repository import BusinessProfileRepository
@@ -6,14 +6,14 @@ from app.business_profiles.schemas import BusinessProfileCreate, BusinessProfile
 
 
 class BusinessProfileService:
-    """
-    Public interface — routes aur worker dono isi ko call karenge.
-    Har call apna khud ka DB session kholta aur band karta hai (Depends(get_db)
-    use nahi kiya), kyunki worker ke paas FastAPI ka request-scoped session
-    available nahi hota.
+    """Coordinate profile operations using a new database session per call.
+
+    Managing sessions here lets HTTP routes and background workers share this
+    service without requiring a FastAPI request-scoped dependency.
     """
 
     def get_profile(self, profile_id: str) -> BusinessProfileRead | None:
+        """Return one profile as an API schema, or ``None`` if it is not found."""
         db = SessionLocal()
         try:
             repository = BusinessProfileRepository(db)
@@ -25,6 +25,7 @@ class BusinessProfileService:
             db.close()
 
     def create_profile(self, data: BusinessProfileCreate) -> BusinessProfileRead:
+        """Save validated profile data and return the newly created profile."""
         db = SessionLocal()
         try:
             repository = BusinessProfileRepository(db)

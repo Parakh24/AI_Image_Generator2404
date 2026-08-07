@@ -1,10 +1,4 @@
-"""
-Repository layer for GenerationJob. 
-
-this file only talks to the database - insert , fetch , update.
-It never decides "whether" something should happen - it just does what 
-its told and reports back what's actually in the database. 
-"""
+"""Database operations for creating, reading, and updating generation jobs."""
 
 from datetime import datetime, timezone 
 from typing import Optional 
@@ -22,6 +16,7 @@ class GenerationJobRepository:
       """
 
       def __init__(self, db: Session):
+        """Store the database session used for all job operations."""
         # session just uses the repository, does not create the repository
         self.db = db 
 
@@ -30,10 +25,7 @@ class GenerationJobRepository:
       def create_job(
               self, user_id: str, profile_id: str, prompt: str, aspect_ratio:str = "1:1"
       ) -> GenerationJob: 
-        """
-          Inserts new row with "PENDING" status. When the user submits the prompt, 
-          this function gets called before the image generation starts.
-        """
+        """Insert and return a new job whose initial status is ``PENDING``."""
         job = GenerationJob(
             user_id=user_id,
             profile_id=profile_id,
@@ -48,11 +40,7 @@ class GenerationJobRepository:
 
 
       def get_job_by_id(self, job_id: str) -> Optional[GenerationJob]:
-        """
-         This function fetches one of the job ids to check whether the tables
-         exist on the database server or not. If not, then service decides whether 
-         to send an error or to retry it.
-        """
+        """Return the job with the given ID, or ``None`` when it does not exist."""
 
         return self.db.query(GenerationJob).filter(GenerationJob.id == job_id).first() 
 
@@ -61,9 +49,7 @@ class GenerationJobRepository:
       def update_job_status(
             self, job_id: str, status: GenerationStatus
       ) -> Optional[GenerationJob]: 
-         """
-         Generic status change -> like "PENDING" -> "PROCESSING" only when worker picks up the job 
-         """
+         """Set a job to the supplied status and return the updated record."""
          job = self.get_job_bby_id(job_id) 
 
          if job is None: 
@@ -77,9 +63,7 @@ class GenerationJobRepository:
 
 
       def mark_job_completed(self, job_id: str) -> Optional[GenerationJob]: 
-         """
-         It sets the job as completed. Call this only when the image asset row is created. 
-         """
+         """Mark a job completed after its image-asset record has been saved."""
          job = self.get_job_by_id(job_id) 
          if job is None: 
             return None 
@@ -93,9 +77,7 @@ class GenerationJobRepository:
 
 
       def mark_job_failed(self, job_id: str, error_message: str) -> Optional[GenerationJob]:
-         """
-         It sets the job as FAILED and records the reason behind this
-         """
+         """Mark a job failed and store a message explaining the failure."""
          job = self.get_job_by_id(job_id) 
 
          if job is None: 

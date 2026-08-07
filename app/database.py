@@ -1,19 +1,7 @@
-"""
-database.py 
+"""Configure SQLAlchemy and provide database sessions for the application.
 
-It defines two things: 
-
-1. Database connection setup 
-2. Defines 2 modules: GenerationJob and Image asset
-
-design decisions: 
-
-- GenerationJob= the "state tracker" for a request. It tracks whcih stage a job is in. 
-- ImageAsset = the record of the actual generated output. the image binary is not stored 
-  here - only the storage_key (path) and metadata are stored. Storing binary blobs in the 
-  db slows down backups, replication and query performance. 
-- Sequence - the image_asset row is created FIRST, and only then is the generation_job status
-  set to be completed 
+The database stores job status and image metadata. Generated image bytes are
+saved by a storage provider instead of being placed directly in the database.
 """
 
 
@@ -35,9 +23,7 @@ Base = declarative_base()
 
 
 def get_db():
-    """
-    FastAPI dependency - yields a DB session, closes it after the request
-    """
+    """Provide a database session for one request and close it afterward."""
 
     db = SessionLocal() 
     try: 

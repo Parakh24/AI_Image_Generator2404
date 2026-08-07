@@ -33,14 +33,17 @@ class ForgeImageProviderError(ImageProviderError):
 
 
 class ForgeImageProvider(ImageProvider):
+    """Generate images by calling a local Stable Diffusion Forge API."""
 
     def __init__(self):
+        """Load the Forge server address and request timeout from the environment."""
         self.base_url = os.getenv("FORGE_API_BASE_URL", "http://127.0.0.1:7860")
         self.timeout_seconds = int(os.getenv("FORGE_TIMEOUT_SECONDS", "120"))
 
     def generate_image(
         self, prompt: str, negative_prompt: str, aspect_ratio: str
     ) -> ImageGenerationResult:
+        """Request one image from Forge and return its decoded bytes and metadata."""
         width, height = ASPECT_RATIO_TO_DIMENSIONS.get(aspect_ratio, (512, 512)) 
         request_id = f"forge_{uuid.uuid4().hex[:10]}"
 

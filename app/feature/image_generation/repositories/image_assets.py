@@ -16,6 +16,7 @@ class ImageAssetRepository:
     """Wraps every database operation related to the image_assets table."""
 
     def __init__(self, db: Session):
+        """Store the database session used for all image-asset operations."""
         self.db = db
 
     def create_asset(

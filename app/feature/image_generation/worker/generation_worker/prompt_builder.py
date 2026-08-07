@@ -1,3 +1,5 @@
+"""Build the provider prompt and negative prompt for a queued job."""
+
 DEFAULT_NEGATIVE_PROMPT = "blurry, low quality, bad anatomy, disfigured, poorly drawn, deformed," \
                           "extra limbs, cloned face, skinny, glitchy, double torso, extra arms, " \
                           "extra hands, mangled fingers, missing lips, ugly face, distorted face, " \
@@ -5,9 +7,7 @@ DEFAULT_NEGATIVE_PROMPT = "blurry, low quality, bad anatomy, disfigured, poorly 
 
 
 def build_prompt(job):
-    """
-    Builds the final prompt and negative prompt for the image generation job.
-    """
+    """Return the positive and negative prompts used to process a job."""
     parts = []
 
     lora_trigger = getattr(job, "lora_trigger_word", None)

@@ -15,6 +15,7 @@ depends_on = None
 
 
 def upgrade():
+    """Add the business-profile identifier column to generation jobs."""
     op.add_column(
         "generation_jobs",
         sa.Column(
@@ -29,4 +30,5 @@ def upgrade():
 
 
 def downgrade():
+    """Remove the business-profile identifier column from generation jobs."""
     op.drop_column("generation_jobs", "profile_id")

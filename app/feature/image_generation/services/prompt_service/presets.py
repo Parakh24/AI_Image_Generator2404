@@ -1,3 +1,5 @@
+"""Map each prompt preset to descriptive style words for the final prompt."""
+
 from app.feature.image_generation.services.prompt_service.schemas import PromptPreset 
 
 

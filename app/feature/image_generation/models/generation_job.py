@@ -1,3 +1,5 @@
+"""Database model and status values for image-generation jobs."""
+
 import enum 
 import uuid 
 import sqlalchemy 
@@ -24,18 +26,12 @@ def generate_job_id():
     
 
 def get_current_time(): 
-    """
-    Return current time when the image is generated
-    """
+    """Return the current UTC time for job timestamps."""
     return datetime.now(timezone.utc) 
 
 
 class GenerationJob(Base): 
-    """
-    database table that tracks one image generation request. 
-    this receives the request from the frontend and creates a 
-    table like structure which stores the properties of an image. 
-    """
+    """Represent one image request and track its processing state."""
 
     __tablename__ = "generation_jobs" 
 

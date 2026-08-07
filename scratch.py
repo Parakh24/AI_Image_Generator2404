@@ -1,3 +1,5 @@
+"""Small manual example that compiles and prints an enriched prompt."""
+
 from app.feature.image_generation.services.prompt_service import prompt_service, PromptRequest, PromptPreset, BusinessProfile 
 
 request = PromptRequest(

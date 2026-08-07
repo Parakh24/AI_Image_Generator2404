@@ -29,7 +29,10 @@ class LocalStorageProviderError(StorageProviderError):
 
 
 class LocalStorageProvider(StorageProvider):
+    """Save generated images beneath a configured directory on this computer."""
+
     def __init__(self):
+        """Load the storage directory and public URL from environment variables."""
         # Where files physically live on disk
         self.base_dir = os.getenv("STORAGE_BASE_DIR", "./generated-images")
         # How that same folder is exposed as a URL clients can hit -
@@ -41,6 +44,7 @@ class LocalStorageProvider(StorageProvider):
     def save_image(
         self, job_id: str, image_bytes: bytes, mime_type: str
     ) -> StorageResult:
+        """Write image bytes to disk and return their storage key and public URL."""
         extension = MIME_TYPE_TO_EXTENSION.get(mime_type, "png")
 
         # Matches the folder pattern decided all the way back in
