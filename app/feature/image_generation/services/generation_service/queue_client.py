@@ -15,9 +15,10 @@ from rq import Queue
 _redis_url = os.getenv("REDIS_URL", "redis://localhost:6379/0")
 _redis_connection = Redis.from_url(_redis_url)
 
-# One shared queue named "generation" - the worker (built in a later
-# step) listens on this exact queue name to pick up jobs.
-generation_queue = Queue("generation", connection=_redis_connection)
+QUEUE_NAME = os.getenv("GENERATION_QUEUE_NAME", "image-generation")
+
+# The API and worker use the same configurable queue name.
+generation_queue = Queue(QUEUE_NAME, connection=_redis_connection)
 
 
 def enqueue_generation_job(job_id: str) -> None:

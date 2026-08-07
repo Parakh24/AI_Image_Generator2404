@@ -42,7 +42,7 @@ REDIS_URL = os.getenv(
 
 QUEUE_NAME = os.getenv(
     "GENERATION_QUEUE_NAME",
-    "generation",
+    "image-generation",
 )
 
 
