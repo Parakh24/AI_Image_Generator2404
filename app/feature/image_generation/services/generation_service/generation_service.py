@@ -26,7 +26,12 @@ class GenerationService:
         self.asset_repo = ImageAssetRepository(db)
 
     def start_generation(
-        self, user_id: str, profile_id: str, prompt: str, aspect_ratio: str
+        self,
+        user_id: str,
+        profile_id: str,
+        tenant_id: str,
+        prompt: str,
+        aspect_ratio: str,
     ) -> GenerationJob:
         """
         Creates a new job record with status PENDING, saves it,
@@ -35,6 +40,7 @@ class GenerationService:
         job = self.job_repo.create_job(
             user_id=user_id,
             profile_id=profile_id,
+            tenant_id=tenant_id,
             prompt=prompt,
             aspect_ratio=aspect_ratio,
         )
@@ -53,6 +59,15 @@ class GenerationService:
         Fetches a job, but ONLY returns it if it belongs to user_id.
         """
         job = self.job_repo.get_job_by_id(job_id)
+        if job is None or job.user_id != user_id:
+            return None
+        return job
+
+    def get_job_for_user_and_tenant(
+        self, job_id: str, user_id: str, tenant_id: str
+    ) -> Optional[GenerationJob]:
+        """Return a job only when it belongs to both the user and the tenant."""
+        job = self.job_repo.get_job_by_id_and_tenant(job_id, tenant_id)
         if job is None or job.user_id != user_id:
             return None
         return job
