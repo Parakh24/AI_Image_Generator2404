@@ -8,6 +8,7 @@ layer - FastAPI automatically sends back a 422 error to the client.
 """
 
 from typing import Literal
+from app.business_profiles.schemas import BusinessProfileCreate
 from app.feature.image_generation.services.prompt_service import PromptPreset
 from pydantic import BaseModel, Field, field_validator
 
@@ -24,7 +25,7 @@ class GenerationCreateRequest(BaseModel):
     image generation job.
     """
 
-    profile_id: str
+    business_profile: BusinessProfileCreate
     prompt: str = Field(
         ...,
         min_length=1,

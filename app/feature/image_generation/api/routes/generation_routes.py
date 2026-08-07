@@ -10,6 +10,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.feature.image_generation.api.routes.dependencies import get_current_user_id
 from app.database import get_db
+from app.business_profiles.service import business_profile_service
 from app.feature.image_generation.models.generation_job import GenerationStatus
 from app.feature.image_generation.api.schemas.generation_request import GenerationCreateRequest
 from app.feature.image_generation.api.schemas.generation_response import GenerationResponse
@@ -46,6 +47,7 @@ def create_image_generation(
     not finished yet" - which is exactly what's true here.
     """
     service = GenerationService(db)
+    created_profile = business_profile_service.create_profile(request.business_profile)
     prompt_request = PromptRequest(
         user_prompt=request.prompt,
         business_profile=BusinessProfile(brand_name="your brand"),
@@ -55,7 +57,7 @@ def create_image_generation(
 
     job = service.start_generation(
         user_id=user_id,
-        profile_id=request.profile_id,
+        profile_id=created_profile.id,
         prompt=final_prompt,
         aspect_ratio=request.aspect_ratio,
     )
