@@ -7,17 +7,7 @@ RULE: if validation fails here, the request never reaches the service
 layer - FastAPI automatically sends back a 422 error to the client.
 """
 
-from typing import Literal
-from app.business_profiles.schemas import BusinessProfileCreate
-from app.feature.image_generation.services.prompt_service import PromptPreset
 from pydantic import BaseModel, Field, field_validator
-
-
-
-# Only these 3 values are allowed - any other value gets automatically
-# rejected by FastAPI, no manual check needed.
-AllowedAspectRatio = Literal["1:1", "16:9", "9:16"]
-
 
 class GenerationCreateRequest(BaseModel):
     """
@@ -25,20 +15,12 @@ class GenerationCreateRequest(BaseModel):
     image generation job.
     """
 
-    business_profile: BusinessProfileCreate
     prompt: str = Field(
         ...,
         min_length=1,
         max_length=500,
         description="User's image generation prompt. Cannot be blank.",
     )
-    aspect_ratio: AllowedAspectRatio = Field(
-        default="1:1",
-        description="Allowed values: 1:1, 16:9, 9:16",
-    )
-
-    preset: PromptPreset = PromptPreset.GENERIC
-
     @field_validator("prompt")
     @classmethod
     def prompt_must_not_be_blank(cls, value: str) -> str:

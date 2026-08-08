@@ -17,12 +17,16 @@ from app.feature.image_generation.api.schemas.generation_response import Generat
 from app.feature.image_generation.api.routes.generation_services import GenerationService
 from app.feature.image_generation.services.prompt_service import (
     BusinessProfile,
+    PromptPreset,
     PromptRequest,
     prompt_service,
 )
 
 
 router = APIRouter(prefix="/api/image-generations", tags=["image-generations"])
+
+DEFAULT_ASPECT_RATIO = "1:1"
+DEFAULT_PRESET = PromptPreset.GENERIC
 
 
 @router.post("", status_code=status.HTTP_202_ACCEPTED, response_model=GenerationResponse)
@@ -42,23 +46,36 @@ def create_image_generation(
         or "test_tenant_123"  # 👈 Temporary testing fallback
     )
 
-    # Ab exception raise nahi hoga!
     service = GenerationService(db)
-    created_profile = business_profile_service.create_profile(request.business_profile)
+    profile = business_profile_service.get_latest_profile()
+    if profile is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Create a business profile before requesting image generation",
+        )
+
+    colours = profile.brand_colours
     
     prompt_request = PromptRequest(
         user_prompt=request.prompt,
-        business_profile=BusinessProfile(brand_name="your brand"),
-        preset=request.preset,
+        business_profile=BusinessProfile(
+            brand_name=profile.brand_name,
+            primary_color=colours[0] if colours else None,
+            secondary_color=colours[1] if len(colours) > 1 else None,
+            audience_demographics=profile.target_audience,
+            tone=profile.tone,
+            default_category=profile.industry,
+        ),
+        preset=DEFAULT_PRESET,
     )
     final_prompt = prompt_service.compile(prompt_request)
 
     job = service.start_generation(
         user_id=user_id,
-        profile_id=created_profile.id,
+        profile_id=profile.id,
         tenant_id=tenant_id,
         prompt=final_prompt,
-        aspect_ratio=request.aspect_ratio,
+        aspect_ratio=DEFAULT_ASPECT_RATIO,
     )
     return GenerationResponse(job_id=job.id, status=job.status)
 
