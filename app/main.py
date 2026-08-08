@@ -11,6 +11,12 @@ register (include) each feature's router. No business logic belongs
 in this file -- that lives inside each feature's own routes/services.
 """
 
+if __package__ in (None, ""):
+    import sys
+    from pathlib import Path
+
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
 from fastapi import FastAPI
 from app.feature.image_generation.api.routes.generation_routes import router as generation_router
 from app.business_profiles.routes import router as business_profiles_router
