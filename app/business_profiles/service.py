@@ -24,6 +24,17 @@ class BusinessProfileService:
         finally:
             db.close()
 
+    def get_latest_profile(self) -> BusinessProfileRead | None:
+        """Return the newest profile for internal image-generation use."""
+        db = SessionLocal()
+        try:
+            profile = BusinessProfileRepository(db).get_latest()
+            if profile is None:
+                return None
+            return BusinessProfileRead.from_orm(profile)
+        finally:
+            db.close()
+
     def create_profile(self, data: BusinessProfileCreate) -> BusinessProfileRead:
         """Save validated profile data and return the newly created profile."""
         db = SessionLocal()

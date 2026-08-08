@@ -23,3 +23,11 @@ class BusinessProfileRepository:
     def get_by_id(self, profile_id: str) -> BusinessProfile | None:
         """Return the profile with the given ID, or ``None`` if it is absent."""
         return self.db.query(BusinessProfile).filter(BusinessProfile.id == profile_id).first()
+
+    def get_latest(self) -> BusinessProfile | None:
+        """Return the most recently created business profile, if one exists."""
+        return (
+            self.db.query(BusinessProfile)
+            .order_by(BusinessProfile.created_at.desc(), BusinessProfile.id.desc())
+            .first()
+        )
