@@ -13,17 +13,24 @@ from rq import Retry
 from app.feature.image_generation.models.generation_job import GenerationJob
 from app.feature.image_generation.repositories.generation_jobs import GenerationJobRepository
 from app.feature.image_generation.repositories.image_assets import ImageAssetRepository
-from app.feature.image_generation.services.generation_service.queue_client import generation_queue  # <- apna actual path confirm kar lena, jahan Queue() bana hai
+from app.feature.image_generation.services.generation_service.queue_client import generation_queue
+from app.feature.image_generation.services.moderation_service.moderation_service import moderate_prompt
+from app.feature.image_generation.services.moderation_service.providers.base import ModerationProvider
+from app.feature.image_generation.services.moderation_service.providers.mock_provider import MockModerationProvider
+from app.feature.image_generation.services.moderation_service.exceptions import PromptRejectedException
 
 
 class GenerationService:
     """Coordinate job records, queue submission, and generation-result lookup."""
 
-    def __init__(self, db: Session):
+    def __init__(self, db: Session, moderation_provider: Optional[ModerationProvider] = None):
         """Create repositories that share the request's database session."""
         self.db = db
         self.job_repo = GenerationJobRepository(db)
         self.asset_repo = ImageAssetRepository(db)
+        # injected, defaults to mock — swap this for the real provider later
+        # without touching anything else in this class
+        self.moderation_provider = moderation_provider or MockModerationProvider()
 
     def start_generation(
         self,
@@ -34,9 +41,20 @@ class GenerationService:
         aspect_ratio: str,
     ) -> GenerationJob:
         """
-        Creates a new job record with status PENDING, saves it,
-        and enqueues it for the background worker to pick up.
+        Moderates the prompt first. Only if it passes does this create
+        a job record with status PENDING and enqueue it for the worker.
+        Raises PromptRejectedException if the prompt is blocked.
         """
+        # --- moderation gate: runs BEFORE any DB write ---
+        result = moderate_prompt(
+            prompt=prompt,
+            business_context="",  # TODO: wire actual business profile description
+            provider=self.moderation_provider,
+        )
+        if not result.is_allowed:
+            raise PromptRejectedException(result)
+
+        # --- only reaches here if the prompt passed all checks ---
         job = self.job_repo.create_job(
             user_id=user_id,
             profile_id=profile_id,

@@ -21,6 +21,7 @@ from app.feature.image_generation.services.prompt_service import (
     PromptRequest,
     prompt_service,
 )
+from app.feature.image_generation.services.moderation_service.exceptions import PromptRejectedException
 
 
 router = APIRouter(prefix="/api/image-generations", tags=["image-generations"])
@@ -35,14 +36,14 @@ def create_image_generation(
     current_user: dict = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> GenerationResponse:
-    
+
     user_id = current_user.get("user_id") or current_user.get("sub") or "default_user"
-    
+
     # 👈 Check for multiple common claim names OR fallback to a test tenant ID
     tenant_id = (
-        current_user.get("tenant_id") 
-        or current_user.get("tenantId") 
-        or current_user.get("org_id") 
+        current_user.get("tenant_id")
+        or current_user.get("tenantId")
+        or current_user.get("org_id")
         or "test_tenant_123"  # 👈 Temporary testing fallback
     )
 
@@ -55,7 +56,7 @@ def create_image_generation(
         )
 
     colours = profile.brand_colours
-    
+
     prompt_request = PromptRequest(
         user_prompt=request.prompt,
         business_profile=BusinessProfile(
@@ -70,13 +71,24 @@ def create_image_generation(
     )
     final_prompt = prompt_service.compile(prompt_request)
 
-    job = service.start_generation(
-        user_id=user_id,
-        profile_id=profile.id,
-        tenant_id=tenant_id,
-        prompt=final_prompt,
-        aspect_ratio=DEFAULT_ASPECT_RATIO,
-    )
+    try:
+        job = service.start_generation(
+            user_id=user_id,
+            profile_id=profile.id,
+            tenant_id=tenant_id,
+            prompt=final_prompt,
+            aspect_ratio=DEFAULT_ASPECT_RATIO,
+        )
+    except PromptRejectedException as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={
+                "error": "prompt_rejected",
+                "reason": e.result.reason,
+                "message": e.result.detail,
+            },
+        )
+
     return GenerationResponse(job_id=job.id, status=job.status)
 
 
@@ -89,18 +101,18 @@ def get_image_generation_status(
     """
     Checks the status of an existing job.
 
-    Security rule: A job is only ever returned if it matches BOTH the 
+    Security rule: A job is only ever returned if it matches BOTH the
     user_id AND the tenant_id of the requester.
     """
     user_id = current_user.get("id")
     tenant_id = current_user.get("tenant_id")
 
     service = GenerationService(db)
-    
+
     # Check both user_id and tenant_id to enforce multi-tenant isolation
     job = service.get_job_for_user_and_tenant(
-        job_id=job_id, 
-        user_id=user_id, 
+        job_id=job_id,
+        user_id=user_id,
         tenant_id=tenant_id
     )
 
