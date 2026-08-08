@@ -10,6 +10,6 @@ class ModerationReason(str, Enum):
 
 
 class ModerationResult(BaseModel):
-    is_allowed = bool 
+    is_allowed: bool
     reason: ModerationReason | None = None 
-    detail: str | None = None 
+    detail: str | None = None
